@@ -4,33 +4,33 @@ import Http from './helpers/http';
 
 const baseUrl = "https://api.github.com/";
 const organisationId = "uber";
-const gitHubApiAuthToken = ""; //add your GitHub API OAuth key here to increase request limit
+const gitHubApiAuthToken = process.env.GITHUB_KEY || ""; // I didn't want to put Api key in a public repository :)
 
 
 let logger = new Logger();
 let http = new Http();
-
 let gitHubService = new GitHubService(baseUrl, http, gitHubApiAuthToken);
 
-gitHubService
-    .getUsersForOrganisation(organisationId)
-    .then((users) => {
-        users.forEach((user) => {
-            logger.log("Username: " + user.login);
-        });
-    })
-    .catch((error) => {
-        logger.log("Error: " + error);
-    });
+ gitHubService
+     .getUsersForOrganisation(organisationId)
+     .then((users) => {
+         users.forEach((user) => {           
+             gitHubService
+                 .getRepositoriesForUser(user.login)
+                .then((repositories) => {
+                     logger.log("Username: " + user.login);
 
-gitHubService
-    .getRepositoriesForUser("akre54")
-    .then((repositories) => {
-        repositories.forEach((repository) => {
-            logger.log("Ropositories: " + repository.name);
-        });
-    })
-    .catch((error) => {
-        logger.log("Error: " + error);
-    });  
-   
+                     repositories.forEach((repository) => {
+                        logger.log("  " + repository.name);
+                     });
+                 })
+                 .catch((error) => {
+                     logger.log("Error: " + error);
+                 });
+         });
+     })
+     .catch((error) => {
+         logger.log("Error: " + error);
+     });
+
+
