@@ -64,7 +64,7 @@ describe("github service", () => {
         gitHubService.getUsersForOrganisation(organisationId);
 
         //Assert
-        httpGetStub.getCall(0).args[0].endsWith("?access_token=" + secret).should.equal(true);
+        httpGetStub.getCall(0).args[0].endsWith("&access_token=" + secret).should.equal(true);
     });
 
     it("should prepend base url to url", () => {
@@ -77,6 +77,48 @@ describe("github service", () => {
 
         //Act
         gitHubService.getUsersForOrganisation(organisationId);
+
+        //Assert
+        httpGetStub.getCall(0).args[0].startsWith(baseGitHubUrl).should.equal(true);
+    });
+
+     it("should return repositories for user", (done) => {
+        //Arrange
+        httpGetStub.resolves(userData);
+
+        gitHubService = new GitHubService(baseGitHubUrl, http, "");
+
+        //Act
+        let promise = gitHubService.getRepositoriesForUser("JiEunYou");
+
+        //Assert
+        promise.should.eventually.deep.equal(userData).notify(done);
+    });
+    it("should append authentication parameter to getRepositoriesForUser url", () => {
+        //Arrange
+        const secret = "secret";
+
+        httpGetStub.resolves(userData);
+
+        gitHubService = new GitHubService(baseGitHubUrl, http, secret);
+
+        //Act
+        gitHubService.getRepositoriesForUser("JiEunYou");
+
+        //Assert
+        httpGetStub.getCall(0).args[0].endsWith("&access_token=" + secret).should.equal(true);
+    });
+
+    it("should prepend base url to getRepositoriesForUser url", () => {
+        //Arrange
+        const secret = "secret";
+
+        httpGetStub.resolves(userData);
+
+        gitHubService = new GitHubService(baseGitHubUrl, http, secret);
+
+        //Act
+        gitHubService.getRepositoriesForUser("JiEunYou");
 
         //Assert
         httpGetStub.getCall(0).args[0].startsWith(baseGitHubUrl).should.equal(true);
