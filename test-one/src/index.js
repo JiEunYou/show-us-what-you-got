@@ -1,11 +1,5 @@
-import Logger from './helpers/logger';
+import Bosshog from './bosshog';
 
-let logger = new Logger();
+let bosshog = new Bosshog();
 
-//Your code should go here instead of the welcome message below. Create and modify additional files as necessary.
-
-const welcomeMessage = "Congrats, you're up and running! Welcome to the first moshtix code challenge! " +
-    "Please replace this message with your solution and feel free to add " +
-    "or modify other files as necessary. Good luck : )";
-
-logger.log(welcomeMessage);
+bosshog.print(1, 100);
