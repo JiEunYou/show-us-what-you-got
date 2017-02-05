@@ -11,21 +11,21 @@ class GitHubService {
     }
 
 
-    getUsersForOrganisation(organisationId) {
-        // GET /orgs/:org/members
-        let users = [];
+    getPages(creatUrl, selectData) {
+        let items = [];
         let p = new Promise((resolve, reject) => {
             let getPage = (page) => {
-                this.http.get(this.baseUrl + "orgs/" + organisationId + "/members" + "?per_page=50&page=" + page + "&" + this.authenticationQueryString)
+                let url = creatUrl(page);
+                this.http.get(url)
                     .then((result) => {
-                        result.data.forEach((user) => {
-                            users.push(user.login);
+                        result.data.forEach((item) => {
+                            items.push(selectData(item));
                         });
 
                         if (/rel="next"/.test(result.headers.link)) {
-                             getPage(page + 1);
+                            getPage(page + 1);
                         } else {
-                            resolve(users);
+                            resolve(items);
                         }
                     }).catch((err) => {
                         reject(err)
@@ -38,32 +38,21 @@ class GitHubService {
         return p;
     }
 
+    getUsersForOrganisation(organisationId) {
+        // GET /orgs/:org/members
+        return this.getPages(
+            (page) => this.baseUrl + "orgs/" + organisationId + "/members" + "?per_page=50&page=" + page + "&" + this.authenticationQueryString,
+            (item) => item.login
+        );
+    }
+
     getRepositoriesForUser(userId) {
         // GET /users/:username/repos
 
-        let repositories = [];
-        let p = new Promise((resolve, reject) => {
-            let getPage = (page) => {
-                this.http.get(this.baseUrl + "users/" + userId + "/repos" + "?per_page=50&page=" + page + "&" + this.authenticationQueryString)
-                    .then((result) => {
-                        result.data.forEach((repository) => {
-                            repositories.push(repository.name);
-                        });
-
-                        if (/rel="next"/.test(result.headers.link)) {
-                            getPage(page + 1);
-                        } else {
-                            resolve(repositories);
-                        }
-                    }).catch((err) => {
-                        reject(err)
-                    });
-            };
-
-            getPage(1);
-        });
-
-        return p; 
+        return this.getPages(
+            (page) => this.baseUrl + "users/" + userId + "/repos" + "?per_page=50&page=" + page + "&" + this.authenticationQueryString,
+            (item) => item.name
+        );
     }
 }
 
