@@ -18,17 +18,38 @@ describe("github service", () => {
 
     const organisationId = "facebook";
 
-    const userData = [
-        {
-            userId: "one"
-        },
-        {
-            userId: "two"
-        },
-        {
-            userId: "three"
-        }
-    ];
+    const getUsersResponse = {
+        headers: { link: '' },
+        data: [
+            {
+                login: "one"
+            },
+            {
+                login: "two"
+            },
+            {
+                login: "three"
+            }
+        ]
+    };
+
+    const getRepositoriesResponse = {
+        headers: { link: '' },
+        data: [
+            {
+                name: "one"
+            },
+            {
+                name: "two"
+            },
+            {
+                name: "three"
+            }
+        ]
+    };
+
+    const userNames = ['one','two','three'];
+    const repositories = ['one','two','three'];
 
     beforeEach(() => {
         http = new Http();
@@ -41,7 +62,7 @@ describe("github service", () => {
 
     it("should return users for organisation", (done) => {
         //Arrange
-        httpGetStub.resolves(userData);
+        httpGetStub.resolves(getUsersResponse);
 
         gitHubService = new GitHubService(baseGitHubUrl, http, "");
 
@@ -49,14 +70,14 @@ describe("github service", () => {
         let promise = gitHubService.getUsersForOrganisation(organisationId);
 
         //Assert
-        promise.should.eventually.deep.equal(userData).notify(done);
+        promise.should.eventually.deep.equal(userNames).notify(done);
     });
 
     it("should append authentication parameter to url", () => {
         //Arrange
         const secret = "secret";
 
-        httpGetStub.resolves(userData);
+        httpGetStub.resolves(getUsersResponse);
 
         gitHubService = new GitHubService(baseGitHubUrl, http, secret);
 
@@ -71,7 +92,7 @@ describe("github service", () => {
         //Arrange
         const secret = "secret";
 
-        httpGetStub.resolves(userData);
+        httpGetStub.resolves(getUsersResponse);
 
         gitHubService = new GitHubService(baseGitHubUrl, http, secret);
 
@@ -82,9 +103,9 @@ describe("github service", () => {
         httpGetStub.getCall(0).args[0].startsWith(baseGitHubUrl).should.equal(true);
     });
 
-     it("should return repositories for user", (done) => {
+    it("should return repositories for user", (done) => {
         //Arrange
-        httpGetStub.resolves(userData);
+        httpGetStub.resolves(getRepositoriesResponse);
 
         gitHubService = new GitHubService(baseGitHubUrl, http, "");
 
@@ -92,13 +113,13 @@ describe("github service", () => {
         let promise = gitHubService.getRepositoriesForUser("JiEunYou");
 
         //Assert
-        promise.should.eventually.deep.equal(userData).notify(done);
+        promise.should.eventually.deep.equal(repositories).notify(done);
     });
     it("should append authentication parameter to getRepositoriesForUser url", () => {
         //Arrange
         const secret = "secret";
 
-        httpGetStub.resolves(userData);
+        httpGetStub.resolves(getUsersResponse);
 
         gitHubService = new GitHubService(baseGitHubUrl, http, secret);
 
@@ -113,7 +134,7 @@ describe("github service", () => {
         //Arrange
         const secret = "secret";
 
-        httpGetStub.resolves(userData);
+        httpGetStub.resolves(getUsersResponse);
 
         gitHubService = new GitHubService(baseGitHubUrl, http, secret);
 

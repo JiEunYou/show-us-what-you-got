@@ -11,26 +11,19 @@ let logger = new Logger();
 let http = new Http();
 let gitHubService = new GitHubService(baseUrl, http, gitHubApiAuthToken);
 
- gitHubService
-     .getUsersForOrganisation(organisationId)
-     .then((users) => {
-         users.forEach((user) => {           
-             gitHubService
-                 .getRepositoriesForUser(user.login)
-                .then((repositories) => {
-                     logger.log("Username: " + user.login);
+gitHubService.getUsersForOrganisation(organisationId).then((users) => {
+    users.forEach((user) => {
 
-                     repositories.forEach((repository) => {
-                        logger.log("  " + repository.name);
-                     });
-                 })
-                 .catch((error) => {
-                     logger.log("Error: " + error);
-                 });
-         });
-     })
-     .catch((error) => {
-         logger.log("Error: " + error);
-     });
+        gitHubService.getRepositoriesForUser(user).then((repositories) => {
+            let userWithRepos = {
+                name: user,
+                repositories: repositories
+            };
+            logger.log(userWithRepos);
+        })
+    });
+}).catch((error) => {
+    logger.log("Error: " + error);
+});
 
 

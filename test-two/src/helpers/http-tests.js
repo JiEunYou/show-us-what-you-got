@@ -45,9 +45,11 @@ describe("http", () => {
 
         //Act
         var getPromise = http.get(testEndpoint);
+        
+        let expected = { headers : undefined, data: JSON.parse(testBody)}
 
         //Assert
-        getPromise.should.eventually.deep.equal(JSON.parse(testBody)).notify(done);
+        getPromise.should.eventually.deep.equal(expected).notify(done);
     });
 
     it("should fail when http error occurs", (done) => {
