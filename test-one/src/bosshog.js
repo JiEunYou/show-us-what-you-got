@@ -1,32 +1,32 @@
-import Logger from './helpers/logger';
-
-let logger = new Logger();
-
 class Bosshog {
     constructor() {
 
     }
 
-    print(min, max) {
+    getResult(min, max) {
+        let result = [];
+
         for (var i = min; i <= max; i++) {
 
             if (i % 3 === 0 && i % 5 === 0) {
-                logger.log('BossHog');
+                result.push('BossHog');
                 continue;
             }
 
             if (i % 3 === 0) {
-                logger.log('Boss');
+                result.push('Boss');
                 continue;
             }
 
             if (i % 5 === 0) {
-                logger.log('Hog');
+                result.push('Hog');
                 continue;
             }
 
-            logger.log(i);
+            result.push(i);
         }
+
+        return result;
     }
 }
 
